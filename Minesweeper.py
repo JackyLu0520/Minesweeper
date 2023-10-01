@@ -13,12 +13,13 @@ cyan = (0, 255, 255)
 white = (255, 255, 255)
 black = (0, 0, 0)
 red = (255, 0, 0)
+font_type = 'Consolas'
 
 
 def inputsize():
     pygame.key.set_repeat(200, 25)
     manager = pygame_textinput.TextInputManager(validator=lambda input:(True if input.isdigit() else input == ''))
-    textinput=pygame_textinput.TextInputVisualizer(manager=manager,font_object=pygame.font.SysFont("Consolas", 30),antialias=True,font_color=black,cursor_color=black)
+    textinput=pygame_textinput.TextInputVisualizer(manager=manager,font_object=pygame.font.SysFont(font_type, 30),antialias=True,font_color=black,cursor_color=black)
     clock = pygame.time.Clock()
     while True:
         screen.fill((225, 225, 225))
@@ -42,8 +43,8 @@ size = inputsize()
 block = 15 * 50 // size
 screen = pygame.display.set_mode([size*block, size*block])
 pygame.display.set_caption("Minesweeper")
-font = pygame.font.SysFont("Consolas", block)
-largefont = pygame.font.SysFont("Consolas", size * block // 5)
+font = pygame.font.SysFont(font_type, block)
+largefont = pygame.font.SysFont(font_type, size * block // 5)
 bombimg = pygame.transform.scale(pygame.image.load("Bomb.png"), (block, block))
 flagimg = pygame.transform.scale(pygame.image.load("Flag.png"), (block, block))
 
@@ -220,7 +221,7 @@ while f:
             if(lose):
                 showlose()
                 f = False
-                        
+
     drawmap()
     pygame.display.update()
 pygame.quit()
