@@ -40,13 +40,15 @@ pygame.init()
 screen = pygame.display.set_mode([400, 100])
 pygame.display.set_caption("Minesweeper:Input Size")
 size = inputsize()
-block = 15 * 50 // size
-screen = pygame.display.set_mode([size*block, size*block])
+block = 14 * 50 // size
+screen = pygame.display.set_mode([size*block, size*block+50])
 pygame.display.set_caption("Minesweeper")
+smallfont = pygame.font.SysFont(font_type, 40)
 font = pygame.font.SysFont(font_type, block)
 largefont = pygame.font.SysFont(font_type, size * block // 5)
 bombimg = pygame.transform.scale(pygame.image.load("Bomb.png"), (block, block))
 flagimg = pygame.transform.scale(pygame.image.load("Flag.png"), (block, block))
+
 
 
 def fill0():
@@ -91,6 +93,7 @@ def mapgen(firstclick):
 
 def drawmap():
     screen.fill(blue)
+    pygame.draw.rect(screen, white, (0, size*block, size*block, 50), 0)
     for i in range(size):
         for j in range(size):
             if(clicked[i][j]):
@@ -104,8 +107,10 @@ def drawmap():
                 screen.blit(flagimg, [i*block, j*block])
     for i in range(size):
         pygame.draw.line(screen, black, (i*block-1, 0), (i*block-1, size * block), 2)
-    for i in range(size):
+    for i in range(size+1):
         pygame.draw.line(screen, black, (0, i*block-1), (size * block, i*block-1), 2)
+    pygame.draw.rect(screen, red, (size*block-150, size*block, 150, 50), 0)
+    screen.blit(smallfont.render("Replay", 1, black), [size*block-140, size*block+5])
 
 
 def click(x, y):
@@ -130,6 +135,14 @@ def showwin():
         event = pygame.event.wait()
         if event.type == pygame.QUIT:
             break
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            spot = pygame.mouse.get_pos()
+            if(spot[1]>=size*block):
+                if(spot[0]>=size*block-150):
+                    pygame.quit()
+                    import os
+                    os.system("python Minesweeper.py")
+                    exit()
 
 
 def showlose():
@@ -145,83 +158,115 @@ def showlose():
         event = pygame.event.wait()
         if event.type == pygame.QUIT:
             break
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            spot = pygame.mouse.get_pos()
+            if(spot[1]>=size*block):
+                if(spot[0]>=size*block-150):
+                    pygame.quit()
+                    import os
+                    os.system("python Minesweeper.py")
+                    exit()
 
 
-f = True
-mousedown = [False, False, False, False, False, False]
-fill0()
-firstclick = [0, 0]
-while f:
-    for event in pygame.event.get():
-        if (event.type == pygame.QUIT):
+def first():
+    f = True
+    mousedown = [False, False, False, False, False, False]
+    fill0()
+    firstclick = [0, 0]
+    while f:
+        for event in pygame.event.get():
+            if (event.type == pygame.QUIT):
+                pygame.quit()
+                exit()
+            elif (event.type == pygame.MOUSEBUTTONDOWN):
+                mousedown[event.button] = True
+            elif (event.type == pygame.MOUSEBUTTONUP):
+                mousedown = [False, False, False, False, False, False]
+        if(mousedown[1]):
+            spot = pygame.mouse.get_pos()
+            if(spot[1]>=size*block):
+                if(spot[0]>=size*block-150):
+                    pygame.quit()
+                    import os
+                    os.system("python Minesweeper.py")
+                    exit()
+            else:
+                firstclick=[spot[0]//block,spot[1]//block]
+                f = False
+                mapgen(firstclick)
+                click(firstclick[0],firstclick[1])
+        if(mousedown[3]):
+            spot = pygame.mouse.get_pos()
+            flag[spot[0]//block][spot[1]//block] = 1
+        drawmap()
+        pygame.display.update()
+
+
+def main():
+    mousedown = [False, False, False, False, False, False]
+    f = True
+    while f:
+        for event in pygame.event.get():
+            if (event.type == pygame.QUIT):
+                f = False
+            elif (event.type == pygame.MOUSEBUTTONDOWN):
+                mousedown[event.button] = True
+            elif (event.type == pygame.MOUSEBUTTONUP):
+                mousedown = [False, False, False, False, False, False]
+        win = 1
+        for i in range(size):
+            for j in range(size):
+                if(clicked[i][j] == 0 and a[i][j] != -1):
+                    win = 0
+        if(win):
+            showwin()
             f = False
-        elif (event.type == pygame.MOUSEBUTTONDOWN):
-            mousedown[event.button] = True
-        elif (event.type == pygame.MOUSEBUTTONUP):
-            mousedown = [False, False, False, False, False, False]
-    if(mousedown[1]):
-        spot = pygame.mouse.get_pos()
-        firstclick=[spot[0]//block,spot[1]//block]
-        f = False
-    if(mousedown[3]):
-        spot = pygame.mouse.get_pos()
-        flag[spot[0]//block][spot[1]//block] = 1
-    drawmap()
-    pygame.display.update()
-mapgen(firstclick)
-click(firstclick[0],firstclick[1])
-f = True
-while f:
-    for event in pygame.event.get():
-        if (event.type == pygame.QUIT):
-            f = False
-        elif (event.type == pygame.MOUSEBUTTONDOWN):
-            mousedown[event.button] = True
-        elif (event.type == pygame.MOUSEBUTTONUP):
-            mousedown = [False, False, False, False, False, False]
-    win = 1
-    for i in range(size):
-        for j in range(size):
-            if(clicked[i][j] == 0 and a[i][j] != -1):
-                win = 0
-    if(win):
-        showwin()
-        f = False
-    if(mousedown[1]):
-        spot = pygame.mouse.get_pos()
-        if(a[spot[0]//block][spot[1]//block] == -1):
-            showlose()
-            f = False
-        else:
-            click(spot[0]//block, spot[1]//block)
-    if(mousedown[3]):
-        spot = pygame.mouse.get_pos()
-        flag[spot[0]//block][spot[1]//block] = 1
-    if(mousedown[2]):
-        spot = pygame.mouse.get_pos()
-        cnt = 0
-        for i in range(8):
-            tx = spot[0]//block+dirs[i][0]
-            ty = spot[1]//block+dirs[i][1]
-            if(tx < 0 or tx > size - 1 or ty < 0 or ty > size - 1 or clicked[tx][ty]):
-                continue
-            if(flag[tx][ty] == 1):
-                cnt += 1
-        if(cnt == a[spot[0]//block][spot[1]//block]):
-            lose = False
+        if(mousedown[1]):
+            spot = pygame.mouse.get_pos()
+            if(spot[1]>=size*block):
+                if(spot[0]>=size*block-150):
+                    pygame.quit()
+                    import os
+                    os.system("python Minesweeper.py")
+                    exit()
+            else:
+                if(a[spot[0]//block][spot[1]//block] == -1):
+                    showlose()
+                    f = False
+                else:
+                    click(spot[0]//block, spot[1]//block)
+        if(mousedown[3]):
+            spot = pygame.mouse.get_pos()
+            flag[spot[0]//block][spot[1]//block] = 1
+        if(mousedown[2]):
+            spot = pygame.mouse.get_pos()
+            cnt = 0
             for i in range(8):
                 tx = spot[0]//block+dirs[i][0]
                 ty = spot[1]//block+dirs[i][1]
                 if(tx < 0 or tx > size - 1 or ty < 0 or ty > size - 1 or clicked[tx][ty]):
                     continue
-                if(flag[tx][ty] == 0):
-                    click(tx, ty)
-                    if(a[tx][ty] == -1):
-                        lose = True
-            if(lose):
-                showlose()
-                f = False
+                if(flag[tx][ty] == 1):
+                    cnt += 1
+            if(cnt == a[spot[0]//block][spot[1]//block]):
+                lose = False
+                for i in range(8):
+                    tx = spot[0]//block+dirs[i][0]
+                    ty = spot[1]//block+dirs[i][1]
+                    if(tx < 0 or tx > size - 1 or ty < 0 or ty > size - 1 or clicked[tx][ty]):
+                        continue
+                    if(flag[tx][ty] == 0):
+                        click(tx, ty)
+                        if(a[tx][ty] == -1):
+                            lose = True
+                if(lose):
+                    showlose()
+                    f = False
 
-    drawmap()
-    pygame.display.update()
+        drawmap()
+        pygame.display.update()
+
+
+first()
+main()
 pygame.quit()
