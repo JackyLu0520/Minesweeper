@@ -21,15 +21,20 @@ def inputsize():
     manager = pygame_textinput.TextInputManager(validator=lambda input:(True if input.isdigit() else input == ''))
     textinput=pygame_textinput.TextInputVisualizer(manager=manager,font_object=pygame.font.SysFont(font_type, 30),antialias=True,font_color=black,cursor_color=black)
     clock = pygame.time.Clock()
+    invalid=0
     while True:
         screen.fill((225, 225, 225))
         events = pygame.event.get()
         textinput.update(events)
         screen.blit(textinput.surface, (10, 10))
+        if invalid:
+            screen.blit(pygame.font.SysFont(font_type,30).render("Input is invalid!",1,black),(10,50))
         for event in events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                if textinput.value != '':
+                if textinput.value != '' and int(textinput.value)>3 and int(textinput.value)<=50:
                     return int(textinput.value)
+                else:
+                    invalid=1
             if event.type == pygame.QUIT:
                 exit()
         pygame.display.update()
@@ -38,7 +43,7 @@ def inputsize():
 
 pygame.init()
 screen = pygame.display.set_mode([400, 100])
-pygame.display.set_caption("Minesweeper:Input Size")
+pygame.display.set_caption("Minesweeper:Input Size(>3,<=50)")
 size = inputsize()
 block = 14 * 50 // size
 screen = pygame.display.set_mode([size*block, size*block+50])
@@ -109,8 +114,8 @@ def drawmap():
         pygame.draw.line(screen, black, (i*block-1, 0), (i*block-1, size * block), 2)
     for i in range(size+1):
         pygame.draw.line(screen, black, (0, i*block-1), (size * block, i*block-1), 2)
-    pygame.draw.rect(screen, red, (size*block-150, size*block, 150, 50), 0)
-    screen.blit(smallfont.render("Replay", 1, black), [size*block-140, size*block+5])
+    pygame.draw.rect(screen, red, (size*block-300, size*block, 300, 50), 0)
+    screen.blit(smallfont.render("Play Again", 1, black), [size*block-250, size*block+5])
 
 
 def click(x, y):
@@ -138,7 +143,7 @@ def showwin():
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             spot = pygame.mouse.get_pos()
             if(spot[1]>=size*block):
-                if(spot[0]>=size*block-150):
+                if(spot[0]>=size*block-300):
                     pygame.quit()
                     import os
                     os.system("python Minesweeper.py")
@@ -161,7 +166,7 @@ def showlose():
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             spot = pygame.mouse.get_pos()
             if(spot[1]>=size*block):
-                if(spot[0]>=size*block-150):
+                if(spot[0]>=size*block-300):
                     pygame.quit()
                     import os
                     os.system("python Minesweeper.py")
@@ -185,7 +190,7 @@ def first():
         if(mousedown[1]):
             spot = pygame.mouse.get_pos()
             if(spot[1]>=size*block):
-                if(spot[0]>=size*block-150):
+                if(spot[0]>=size*block-300):
                     pygame.quit()
                     import os
                     os.system("python Minesweeper.py")
@@ -224,7 +229,7 @@ def main():
         if(mousedown[1]):
             spot = pygame.mouse.get_pos()
             if(spot[1]>=size*block):
-                if(spot[0]>=size*block-150):
+                if(spot[0]>=size*block-300):
                     pygame.quit()
                     import os
                     os.system("python Minesweeper.py")
