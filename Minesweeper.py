@@ -1,8 +1,9 @@
-import pygame
+import pygame,pygame_textinput
 import random
-import pygame_textinput
+import os
 
 
+os.chdir(os.path.dirname(__file__))
 dirs = [[1, 0], [0, 1], [-1, 0], [0, -1],
         [1, 1], [1, -1], [-1, 1], [-1, -1]]
 a = []
@@ -44,6 +45,7 @@ def inputsize():
 pygame.init()
 screen = pygame.display.set_mode([400, 100])
 pygame.display.set_caption("Minesweeper:Input Size(>3,<=50)")
+pygame.display.set_icon(pygame.image.load("Bomb.png"))
 size = inputsize()
 block = 14 * 50 // size
 screen = pygame.display.set_mode([size*block, size*block+50])
@@ -145,8 +147,7 @@ def showwin():
             if(spot[1]>=size*block):
                 if(spot[0]>=size*block-300):
                     pygame.quit()
-                    import os
-                    os.system("python Minesweeper.py")
+                    os.system("python "+__file__)
                     exit()
 
 
@@ -168,8 +169,7 @@ def showlose():
             if(spot[1]>=size*block):
                 if(spot[0]>=size*block-300):
                     pygame.quit()
-                    import os
-                    os.system("python Minesweeper.py")
+                    os.system("python "+__file__)
                     exit()
 
 
@@ -192,8 +192,7 @@ def first():
             if(spot[1]>=size*block):
                 if(spot[0]>=size*block-300):
                     pygame.quit()
-                    import os
-                    os.system("python Minesweeper.py")
+                    os.system("python "+__file__)
                     exit()
             else:
                 firstclick=[spot[0]//block,spot[1]//block]
@@ -231,8 +230,7 @@ def main():
             if(spot[1]>=size*block):
                 if(spot[0]>=size*block-300):
                     pygame.quit()
-                    import os
-                    os.system("python Minesweeper.py")
+                    os.system("python "+__file__)
                     exit()
             else:
                 if(a[spot[0]//block][spot[1]//block] == -1):
